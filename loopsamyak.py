@@ -66,7 +66,6 @@ def run_code(parameters):
         boreholes.append(borehole)#the new borehole object is appended to the above defined list
         borehole_g = g_i.borehole(boreholes[i].x_coordinate) #Bore hole is created extracting x coordinate from obj list
         
-        print(borehole_g)
         sum=0
 
         soillayer_no = 1
@@ -78,11 +77,9 @@ def run_code(parameters):
             sum+=boreholes[i].soillayer[j].soillayer_depth
             if i==0:
                 boreholepolygon_g = g_i.soillayer(boreholes[i].soillayer[j].soillayer_depth)
-                print(boreholepolygon_g)
 
             if i!=0 and j>previous_soillayer_no-1:
                 boreholepolygon_g = g_i.soillayer(boreholes[i].soillayer[j].soillayer_depth)
-                print(boreholepolygon_g)
             g_i.setsoillayerlevel(borehole_g, j+1, -sum)
             
             if i!=0 and j>previous_soillayer_no-1:
@@ -144,9 +141,10 @@ def run_code(parameters):
     EA= (EPlate-parameters['E']) * parameters['Plthk'] / 1000
     EI= (EPlate-parameters['E']) * ((parameters['Plthk']/1000) ** 3) /12
     d = math.sqrt(12*EI/EA)
+    w = 25 - 1/2 * parameters['Gam']
     nu= 0.25 #neu value for RCC plate material -> different for different grades of concrete? #esko value kati hunxa?
     Gref= (EA/d)/(2*(1+nu))
-    plat_mat=g_i.platemat('MaterialName','Facing_1','nu',0.25,'w',6,'IsIsotropic',True,'EA',EA,'EA2',EA,'EI',EI,'d',d,'Gref',Gref)
+    plat_mat=g_i.platemat('MaterialName','Facing_1','nu',0.25,'w',w,'IsIsotropic',True,'EA',EA,'EA2',EA,'EI',EI,'d',d,'Gref',Gref)
 
     # # Defining plate and Nail
 
@@ -231,13 +229,13 @@ def run_code(parameters):
     #meshing
     g_i.gotomesh()
     #refining the mesh
-    refineControl = 1
+    refineControl = 2
     for j in range (refineControl):
         for i in range(step+1):
         
             polygon_s = g_i.Polygons[i]
             g_i.refine(polygon_s)
-    g_i.mesh(0.1)
+    g_i.mesh(0.06)
 
     m=math.tan(math.radians(90-slope))
     y2=0
@@ -340,10 +338,8 @@ def run_code(parameters):
                     init_depth-=step1 #1=vertical spacing of embedded beam
 
         beam_index.append(excav_beam)
-        print(beam_index)
 
         u=k-n #no. of embedded beam in a phase
-        print('u= '+str(u))
 
         excav_plate=[]
 
@@ -353,14 +349,14 @@ def run_code(parameters):
             if round(init_depth,4)<-1*YExtent and round(init_depth+step1,4)>-1*YExtent:  #-10 soil layer depth
                 if y2==-1*YExtent:
                     for plate_no in range(u):
-                        print(phase[i+1].Name)
+
                         g_i.activate(g_i.Plates[l],phase[i+1])
                         excav_plate.append(l)
                         l+=1
 
                 else:
                     for plate_no in range(u+1):
-                        print(phase[i+1].Name)
+
                         g_i.activate(g_i.Plates[l],phase[i+1])
                         excav_plate.append(l)
                         l+=1
@@ -374,8 +370,6 @@ def run_code(parameters):
 
 
         else:
-            print(y2_dat[counter-1],y1_dat[counter-2])
-            print('fakg')
             if y2_dat[counter-1]<-1*YExtent and y1_dat[counter-2]>-1*YExtent and y1_dat[counter-2]==-round(i*d,4):
 
                 if  init_depth+step1==-1*YExtent or init_depth+2*step1==-1*YExtent or init_depth+3*step1==-1*YExtent or init_depth+4*step1==-1*YExtent or init_depth+5*step1==-1*YExtent:
@@ -505,27 +499,32 @@ def run_code(parameters):
     else:
         displacementsInXdirection = gettable_step_vs_ux(phaseorder=[g_o.Phases[-2]])
 
-    with open('resultOfModels_FOSandDisplacement.txt','a') as f:
-        for par in parameters.values():
-            f.write(f'{par}\t')
-        f.write(f'{round(FOS,3)}\t{round(displacementsInXdirection[-1],3)}')
-        f.write('\n')
-
-if __name__ == '__main__':
-    
     if not os.path.exists('resultOfModels_FOSandDisplacement.txt'):
         with open('resultOfModels_FOSandDisplacement.txt','a') as f:
             HEADINGS = ['S.N.','E','Gam','phi','C','Neu','dil','ExDep','Bfill','Plthk','FAng','Inc','Sp','Len','FOS','Dis']
             for Head in HEADINGS:
                 f.write(f'{Head}\t')
             f.write('\n')
+
+    with open('resultOfModels_FOSandDisplacement.txt','a') as f:
+        for par in parameters.values():
+            f.write(f'{par}\t')
+        f.write(f'{round(FOS,3)}\t{round(displacementsInXdirection[-1],3)}')
+        f.write('\n')
+
+    s_i.close()
+    s_o.close()
+    #g_i.kill()
+
+if __name__ == '__main__':
+    
     
     start_entry = int(input("enter model to start from :"))
     end_entry = int(input("enter last model to run :"))
 
     startPlaxis()
     for Model_id in range(start_entry, end_entry+1):
-        run_code(Model_id)
+        run_code(parameters = readtxt(Model_id))
 
     '''root = Tk()
     # filedialog.askopenfile
