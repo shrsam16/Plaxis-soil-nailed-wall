@@ -15,7 +15,7 @@ def getParameter(MODELNUMBER):
                 for c in C:#3
                     for n in Neu:#5
                         for ExDep in ExcavationDepth:#6
-                            Bfill = p -5
+                            Bfill = 0
                             for Plthk in PlateThickness:
                                 for FAng in FaceAngle:#8
                                     for inc in NailInclination:#9
@@ -50,7 +50,7 @@ if __name__ == "__main__":
 
     #Geometry
     ExcavationDepth = [6.0]#[2.0,4.0,6.0,8.0,10.0]
-    BackfillAngle = [13.0]#[0.0, 13.0, 26.0] 
+    # BackfillAngle = [13.0]#[0.0, 13.0, 26.0] 
     FaceAngle = [5.0, 10.0]#[10.0, 5.0, 0.0]
     #Nail
     NailInclination = [15]#[13.0,15.0,18.0]
@@ -63,10 +63,17 @@ if __name__ == "__main__":
     #global startIndex, stopIndex
     startIndex = int(input("model start index: "))
     stopIndex = int(input("model end index: "))
-
+    # modelCounter = 0
+    # maxNoOfModels = 2
     parameterKeys = ['S.N.','E','Gam','phi','C','Neu','dil','ExDep','Bfill','Plthk','FAng','Inc','Sp','Len']
     for MODELNUMBER in range (startIndex, stopIndex+1):
         parameters = next(getParameter(MODELNUMBER))
+        # if modelCounter == 0:
+        #     lpsmk.startPlaxis()
+        # if modelCounter < maxNoOfModels:
+        #     modelCounter += 1
+        # else:
+        #     modelCounter = 0
         lpsmk.startPlaxis()
         lpsmk.run_code(parameters)
         print(f"{MODELNUMBER} CrudeFos = {round(crudeFOS(parameters['Len'], parameters['Sp'], parameters['FAng']), 3)}")
