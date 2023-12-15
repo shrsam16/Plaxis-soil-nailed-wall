@@ -25,7 +25,7 @@ def getParameter(MODELNUMBER):
                                                     counter += 1
                                                     continue
                                                 
-                                                parameter = {'E': e,
+                                                parameter = {'SN': counter,'E': e,
                                                                 'Gam' : Gam,
                                                                 'phi' : p,
                                                                 'C' : c,
