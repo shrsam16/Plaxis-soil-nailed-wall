@@ -250,6 +250,8 @@ def run_code(parameters):
 
     g_i.gotostages()
     phase0=g_i.InitialPhase
+    if parameters['Bfill'] > 0:
+        g_i.InitialPhase.DeformCalcType.set('Gravity Loading')
     phase=[phase0]
     excav=[f'{i} th excavation' for i in range(100)]
     init_depth=-1*FirstNailDepth
