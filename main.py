@@ -1,5 +1,5 @@
 import loopsamyak as lpsmk
-
+import comparision
 def crudeFOS(Len, Sp, FAng):
     return Len - Sp + FAng
 
@@ -41,6 +41,7 @@ def getParameter(MODELNUMBER):
                                                                 }
                                                 yield parameter
 
+parameterKeys = ['S.N.','E','Gam','phi','C','Neu','dil','ExDep','Bfill','Plthk','FAng','Inc','Sp','Len']
 E = [8000, 6500 ,5000]
 GammaUnsat = [19.5, 21.0, 22.5]
 phi = [26.0,30.0,34.0]
@@ -61,20 +62,26 @@ PlateThickness = [100, 200]#[150]
 
 if __name__ == "__main__":
     
-    #global startIndex, stopIndex
     startIndex = int(input("model start index: "))
     stopIndex = int(input("model end index: "))
+    # for i in range(200, 210):
+    #     model1 = next(getParameter(i+1))
+    #     model2 = next(getParameter(i+2))
+    #     if not comparision.WroseForSure(model1, model2):
+    #         print(f'model {i+2} is worse than model {i+1}')
+    #     else:
+    #         print(f'model {i+2} maybe better than model {i+1}')
+
     # modelCounter = 0
     # maxNoOfModels = 2
-    parameterKeys = ['S.N.','E','Gam','phi','C','Neu','dil','ExDep','Bfill','Plthk','FAng','Inc','Sp','Len']
     lpsmk.startPlaxis()
     for MODELNUMBER in range (startIndex, stopIndex+1):
         parameters = next(getParameter(MODELNUMBER))
         # if modelCounter == 0:
-        #     lpsmk.startPlaxis()
-        # if modelCounter < maxNoOfModels:
-        #     modelCounter += 1
-        # else:
-        #     modelCounter = 0
+    #     #     lpsmk.startPlaxis()
+    #     # if modelCounter < maxNoOfModels:
+    #     #     modelCounter += 1
+    #     # else:
+    #     #     modelCounter = 0
         lpsmk.run_code(parameters)
-        print(f"{MODELNUMBER} CrudeFos = {round(crudeFOS(parameters['Len'], parameters['Sp'], parameters['FAng']), 3)}")
+    #     print(f"{MODELNUMBER} CrudeFos = {round(crudeFOS(parameters['Len'], parameters['Sp'], parameters['FAng']), 3)}")
