@@ -250,6 +250,8 @@ def run_code(parameters):
 
     g_i.gotostages()
     phase0=g_i.InitialPhase
+    if parameters['Bfill'] > 0:
+        g_i.InitialPhase.DeformCalcType.set('Gravity Loading')
     phase=[phase0]
     excav=[f'{i} th excavation' for i in range(100)]
     init_depth=-1*FirstNailDepth
@@ -507,10 +509,10 @@ def run_code(parameters):
             f.write('\n')
 
     with open('resultOfModels_FOSandDisplacement.txt','a') as f:
+        f.write('\n')
         for par in parameters.values():
             f.write(f'{par}\t')
         f.write(f'{round(FOS,3)}\t{round(displacementsInXdirection[-1],3)}')
-        f.write('\n')
 
     s_i.close()
     s_o.close()
