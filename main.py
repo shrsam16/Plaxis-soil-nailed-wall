@@ -1,4 +1,8 @@
+import pandas as pd
+
 import loopsamyak as lpsmk
+import model_skipper as skip
+
 
 def crudeFOS(Len, Sp, FAng):
     return Len - Sp + FAng
@@ -67,14 +71,32 @@ if __name__ == "__main__":
     # modelCounter = 0
     # maxNoOfModels = 2
     parameterKeys = ['S.N.','E','Gam','phi','C','Neu','dil','ExDep','Bfill','Plthk','FAng','Inc','Sp','Len']
+    
     lpsmk.startPlaxis()
+
     for MODELNUMBER in range (startIndex, stopIndex+1):
         parameters = next(getParameter(MODELNUMBER))
+
+ 
+
+        if skip.shouldSkip(parameters):
+            #skips this model
+            continue
+        else:
+            runResult = lpsmk.run_code(parameters)
+            print("run")
+            if runResult[-2] < 1.3:
+                printing = pd.DataFrame(columns = ['S.N.','E'  ,'Gam','phi' ,'C'   ,'Neu' ,'dil' ,'ExDep' ,'Bfill' ,'Plthk' ,'FAng' ,'Inc' ,'Sp' ,'Len','FOS','Dis'])
+
+                printing.loc[len(printing)] = runResult
+                printing.drop(['FOS','Dis'], axis=1, inplace = True)
+                printing.to_csv('too_weak.csv',mode='a',index=False,header=False)
+        
         # if modelCounter == 0:
         #     lpsmk.startPlaxis()
         # if modelCounter < maxNoOfModels:
         #     modelCounter += 1
         # else:
         #     modelCounter = 0
-        lpsmk.run_code(parameters)
-        print(f"{MODELNUMBER} CrudeFos = {round(crudeFOS(parameters['Len'], parameters['Sp'], parameters['FAng']), 3)}")
+        
+        # print(f"{MODELNUMBER} CrudeFos = {round(crudeFOS(parameters['Len'], parameters['Sp'], parameters['FAng']), 3)}")

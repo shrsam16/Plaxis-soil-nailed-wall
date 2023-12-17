@@ -517,6 +517,11 @@ def run_code(parameters):
     s_i.close()
     s_o.close()
     #g_i.kill()
+    par_list = list(parameters.values())
+    par_list.append(round(FOS,3))
+    par_list.append(round(displacementsInXdirection[-1],3))
+
+    return(par_list)
 
 if __name__ == '__main__':
     
