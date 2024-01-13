@@ -45,20 +45,20 @@ def getParameter(MODELNUMBER):
                                                                 }
                                                 yield parameter
 
-E = [6500] #[8000, 6500 ,5000]
-GammaUnsat =[22.5] #[19.5, 21.0, 22.5]
-phi = [26.0]#[26.0,30.0,34.0]
-C = [15.0]#[25.0,15.0,5.0]
+E = [15000, 12500, 10000] #[8000, 6500 ,5000]
+GammaUnsat =[19.5,21.0,22.5] #[19.5, 21.0, 22.5]
+phi = [34.0, 30.0, 26.0]
+C = [25.0,15.0,5.0]
 Neu = [0.30]
 
 #Geometry
 ExcavationDepth = [2.0,4.0,6.0,8.0,10.0]
 #BackfillAngle = [13.0]#[0.0, 13.0, 26.0]
-FaceAngle = [5.0, 10.0]#[10.0, 5.0, 0.0]
+FaceAngle = [10.0, 5.0, 0.0]
 #Nail
 NailInclination = [15]#[13.0,15.0,18.0]
 NailSpacing = [0.5, 0.7, 0.9]
-NailLength = [1.2, 1.0, 0.8]#[0.8, 0.7, 0.6]
+NailLength = [(x+3)/10 for x in range (9,0,-1)]#[0.8, 0.7, 0.6]
 NailDiameter = 32.0
 #plate
 PlateThickness = [150]#[100, 200]#
@@ -86,7 +86,7 @@ if __name__ == "__main__":
         else:
             runResult = lpsmk.run_code(parameters)
             print("run")
-            if runResult[-2] < 1.3:
+            if ((abs(runResult[-1]) > (runResult[7]/333 + 0.002))):
                 printing = pd.DataFrame(columns = ['S.N.','E'  ,'Gam','phi' ,'C'   ,'Neu' ,'dil' ,'ExDep' ,'Bfill' ,'Plthk' ,'FAng' ,'Inc' ,'Sp' ,'Len','FOS','Dis'])
 
                 printing.loc[len(printing)] = runResult
